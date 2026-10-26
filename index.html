@@ -90,3 +90,111 @@ if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigato
 render();
 </script>
 </body></html>
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#173b2f">
+<meta name="description" content="Roz ki mazdoori, attendance, kamai aur kharch ka hisab">
+<link rel="manifest" href="manifest.json">
+<title>मेरा हिसाब</title>
+<style>
+:root{--green:#173b2f;--green2:#246b4b;--bg:#f3f6f3;--card:#fff;--text:#17211b;--muted:#66736b;--red:#b42318;--line:#e0e7e1}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;color:var(--text)}header{background:var(--green);color:white;padding:22px 18px 18px;border-radius:0 0 22px 22px}header h1{margin:0;font-size:25px}header p{margin:5px 0 0;color:#d3e7d9;font-size:14px}.wrap{max-width:720px;margin:auto;padding:14px 14px 36px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:-2px}.stat,.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}.stat small{color:var(--muted);display:block}.stat strong{font-size:23px;display:block;margin-top:4px}.green{color:var(--green2)}.red{color:var(--red)}nav{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:16px 0}nav button{padding:11px 4px;border-radius:12px;border:1px solid var(--line);background:white;color:var(--green);font-weight:700}nav button.active{background:var(--green);color:white}h2{font-size:19px;margin:0 0 14px}.panel{margin-bottom:13px}label{display:block;font-weight:650;font-size:14px;margin:12px 0 6px}input,select,textarea{width:100%;font:inherit;padding:12px;border:1px solid #cbd6cd;border-radius:10px;background:white;color:var(--text)}.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.choices button{padding:12px 4px;border:1px solid #cad6cc;border-radius:10px;background:white;font-weight:650}.choices button.chosen{background:#dff3e5;border-color:var(--green2);color:var(--green)}.primary{width:100%;padding:13px;border:0;border-radius:12px;background:var(--green2);color:white;font-size:16px;font-weight:750;margin-top:14px}.secondary{padding:9px 12px;border:1px solid var(--line);background:white;border-radius:9px;color:var(--green);font-weight:650}.entry{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding:12px 0}.entry:first-of-type{border-top:0}.entry small{display:block;color:var(--muted);margin-top:3px}.entry .amount{font-weight:800;white-space:nowrap}.delete{border:0;background:#fff0ee;color:var(--red);border-radius:8px;padding:7px}.hidden{display:none!important}.muted{color:var(--muted);font-size:13px}.summaryline{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}.summaryline:last-child{border-bottom:0}.empty{padding:14px 0;color:var(--muted);font-size:14px}.footer{text-align:center;color:var(--muted);font-size:12px;padding:10px}.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#e5f4e9;color:#20583c;font-size:12px}.calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:12px}.calday{min-height:54px;padding:5px 1px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--text);font-weight:700;font-size:14px}.calday small{display:block;font-size:10px;font-weight:600;margin-top:3px}.calday.full{background:#d9f5e2;border-color:#27834c;color:#155b31}.calday.half{background:#fff1c7;border-color:#d69a00;color:#704900}.calday.absent{background:#ffe4e1;border-color:#d54b42;color:#92231c}.calday.blank{background:#f8faf8;color:#8a948d}.callegend{display:flex;flex-wrap:wrap;gap:8px;font-size:12px;margin-top:10px}.callegend span{padding:5px 8px;border-radius:8px}.calcsummary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}.calcsummary div{background:#f1f7f2;border-radius:10px;padding:10px 5px;text-align:center}.calcsummary small{display:block;color:var(--muted);font-size:11px}.calcsummary b{display:block;margin-top:4px;font-size:15px}
+</style>
+</head>
+<body>
+<header><h1>📒 मेरा हिसाब</h1><p>रोज़ की हाज़िरी • मज़दूरी • कमाई और खर्च</p></header>
+<div class="wrap">
+<section class="stats">
+ <div class="stat"><small>कुल हाज़िरी</small><strong id="statDays">0 दिन</strong></div>
+ <div class="stat"><small>हाज़िरी की कमाई</small><strong id="statWage">₹0</strong></div>
+ <div class="stat"><small>कुल आमदनी</small><strong class="green" id="statIncome">₹0</strong></div>
+ <div class="stat"><small>कुल खर्च</small><strong class="red" id="statExpense">₹0</strong></div>
+</section>
+<nav>
+<button data-tab="home" class="active">होम</button><button data-tab="attendance">हाज़िरी</button><button data-tab="hisab">हिसाब</button><button data-tab="report">रिपोर्ट</button>
+</nav>
+<section id="home" class="view">
+ <div class="panel"><h2>नमस्ते! 👋</h2><p>आज की हाज़िरी भरें और रोज़ के पैसे का हिसाब लिखें।</p><button class="primary" onclick="showTab('attendance')">＋ आज की हाज़िरी भरें</button><button class="primary" style="background:#fff;color:#173b2f;border:1px solid #cad6cc" onclick="showTab('hisab')">＋ नया हिसाब लिखें</button></div>
+ <div class="panel"><h2>हाल की एंट्री</h2><div id="recent"></div></div>
+</section>
+<section id="attendance" class="view hidden">
+ <div class="panel"><h2>🧮 कैल्कुलेटर वाली हाज़िरी</h2><p class="muted">तारीख पर बार-बार टैप करें: पूरा दिन → आधा दिन → छुट्टी → खाली। कमाई अपने आप जुड़ेगी।</p>
+ <label for="calMonth">महीना चुनें</label><input type="month" id="calMonth">
+ <label for="calWage">एक दिन की मज़दूरी (₹)</label><input type="number" id="calWage" min="0" inputmode="decimal" placeholder="जैसे 500">
+ <div class="callegend"><span style="background:#d9f5e2">🟩 पूरा दिन</span><span style="background:#fff1c7">🟨 आधा दिन</span><span style="background:#ffe4e1">🟥 छुट्टी</span><span style="background:#f8faf8">⬜ खाली</span></div>
+ <div id="calendarGrid" class="calgrid"></div>
+ <div class="calcsummary"><div><small>पूरे दिन</small><b id="calFull">0</b></div><div><small>आधे दिन</small><b id="calHalf">0</b></div><div><small>कुल दिन</small><b id="calDays">0</b></div></div>
+ <div class="summaryline"><span>कुल कमाई</span><b id="calTotal">₹0</b></div>
+ <button id="saveCalendar" class="primary">इस महीने की हाज़िरी सेव करें</button><p class="muted">खाली तारीखों में कोई बदलाव नहीं होगा। पहले से भरी तारीखों को बदलने के लिए कैलेंडर में टैप करें।</p></div>
+ <div class="panel"><h2>रोज़ की हाज़िरी</h2>
+ <label for="attDate">तारीख</label><input type="date" id="attDate">
+ <label>आज की हाज़िरी</label><div class="choices" id="statusChoices"><button data-status="Present" class="chosen">पूरा दिन</button><button data-status="Half Day">आधा दिन</button><button data-status="Absent">छुट्टी</button></div>
+ <label for="dailyWage">पूरे दिन की मज़दूरी (₹)</label><input id="dailyWage" type="number" min="0" inputmode="decimal" placeholder="जैसे 500">
+ <label for="attNote">काम / नोट (ज़रूरी नहीं)</label><input id="attNote" placeholder="जैसे साइट पर काम">
+ <button id="saveAttendance" class="primary">हाज़िरी सेव करें</button></div>
+ <div class="panel"><h2>हाज़िरी रिकॉर्ड</h2><div id="attendanceList"></div></div>
+</section>
+<section id="hisab" class="view hidden">
+ <div class="panel"><h2>आमदनी और खर्च</h2>
+ <label>हिसाब का प्रकार</label><div class="choices" id="kindChoices"><button data-kind="Income" class="chosen">आमदनी (+)</button><button data-kind="Expense">खर्च (−)</button><button data-kind="Advance">पेशगी</button></div>
+ <label for="entryDate">तारीख</label><input type="date" id="entryDate">
+ <label for="amount">रकम (₹)</label><input id="amount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="जैसे 200">
+ <label for="note">किस चीज़ का हिसाब?</label><input id="note" placeholder="जैसे वेतन मिला, खाना, उधार">
+ <button id="saveEntry" class="primary">हिसाब सेव करें</button></div>
+ <div class="panel"><h2>हिसाब की सूची</h2><div id="entriesList"></div></div>
+</section>
+<section id="report" class="view hidden">
+ <div class="panel"><h2>महीने की रिपोर्ट</h2><label for="reportMonth">महीना चुनें</label><input type="month" id="reportMonth">
+ <div id="reportContent"></div><button class="primary" id="exportBtn">रिकॉर्ड की CSV फ़ाइल डाउनलोड करें</button><p class="muted">CSV फ़ाइल Excel या Google Sheets में खुल सकती है।</p></div>
+ <div class="panel"><h2>डेटा बैकअप</h2><p class="muted">रिकॉर्ड फोन के इसी ब्राउज़र में सेव होते हैं। फोन बदलने या ब्राउज़र डेटा मिटाने से पहले बैकअप डाउनलोड कर लें।</p><button class="secondary" id="backupBtn">पूरा बैकअप डाउनलोड करें</button><label for="restoreFile">बैकअप वापस लाएँ</label><input id="restoreFile" type="file" accept=".json,application/json"><button class="primary" id="restoreBtn">बैकअप से डेटा वापस लाएँ</button></div>
+</section>
+<div class="footer">आपका हिसाब इसी डिवाइस में सेव होता है। नियमित बैकअप रखें।</div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const money=n=>'₹'+(Number(n)||0).toLocaleString('en-IN',{maximumFractionDigits:2});
+let data={attendance:[],entries:[]}, status='Present',kind='Income';
+try{const saved=localStorage.getItem('meraHisabDataV1');if(saved){const p=JSON.parse(saved);data={attendance:Array.isArray(p.attendance)?p.attendance:[],entries:Array.isArray(p.entries)?p.entries:[]}}}catch(e){}
+$('attDate').value=today();$('entryDate').value=today();$('reportMonth').value=today().slice(0,7);
+function persist(){try{localStorage.setItem('meraHisabDataV1',JSON.stringify(data));return true}catch(e){alert('फोन में जगह कम है। कृपया बैकअप डाउनलोड करें।');return false}}
+function showTab(tab){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==tab));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));render()}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+document.querySelectorAll('[data-status]').forEach(b=>b.addEventListener('click',()=>{status=b.dataset.status;document.querySelectorAll('[data-status]').forEach(x=>x.classList.toggle('chosen',x===b))}));
+document.querySelectorAll('[data-kind]').forEach(b=>b.addEventListener('click',()=>{kind=b.dataset.kind;document.querySelectorAll('[data-kind]').forEach(x=>x.classList.toggle('chosen',x===b))}));
+function wageFor(a){let w=Number(a.wage)||0;return a.status==='Present'?w:a.status==='Half Day'?w/2:0}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function empty(){return '<div class="empty">अभी कोई रिकॉर्ड नहीं है।</div>'}
+function del(type,id){if(!confirm('क्या यह रिकॉर्ड मिटाना चाहते हैं?'))return;data[type]=data[type].filter(x=>x.id!==id);persist();render()}
+function entryHtml(e,type){let label=type==='attendance'?({'Present':'पूरा दिन','Half Day':'आधा दिन','Absent':'छुट्टी'}[e.status]):({'Income':'आमदनी','Expense':'खर्च','Advance':'पेशगी'}[e.kind]);let amt=type==='attendance'?wageFor(e):(Number(e.amount)||0);let sign=type==='attendance'?'':e.kind==='Income'?'+':e.kind==='Expense'?'−':'पेशगी ';return `<div class="entry"><div><b>${esc(label)}${e.note?' · '+esc(e.note):''}</b><small>${esc(e.date)}${type==='attendance'?' · दर '+money(e.wage):''}</small></div><div class="amount ${type==='attendance'||e.kind==='Income'?'green':'red'}">${sign}${money(amt)}</div><button class="delete" aria-label="मिटाएँ" onclick="del('${type==='attendance'?'attendance':'entries'}','${e.id}')">✕</button></div>`}
+function render(){let days=data.attendance.reduce((s,a)=>s+(a.status==='Present'?1:a.status==='Half Day'?.5:0),0),earned=data.attendance.reduce((s,a)=>s+wageFor(a),0),income=data.entries.filter(e=>e.kind==='Income').reduce((s,e)=>s+Number(e.amount),0),expense=data.entries.filter(e=>e.kind==='Expense'||e.kind==='Advance').reduce((s,e)=>s+Number(e.amount),0);
+$('statDays').textContent=days+' दिन';$('statWage').textContent=money(earned);$('statIncome').textContent=money(income);$('statExpense').textContent=money(expense);
+$('attendanceList').innerHTML=data.attendance.length?data.attendance.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(a=>entryHtml(a,'attendance')).join(''):empty();
+$('entriesList').innerHTML=data.entries.length?data.entries.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(e=>entryHtml(e,'entries')).join(''):empty();
+let recent=[...data.attendance.map(a=>({...a,_type:'attendance'})),...data.entries.map(e=>({...e,_type:'entries'}))].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+$('recent').innerHTML=recent.length?recent.map(e=>entryHtml(e,e._type)).join(''):empty();
+const m=$('reportMonth').value;let aa=data.attendance.filter(a=>a.date.startsWith(m)),ee=data.entries.filter(e=>e.date.startsWith(m));let d=aa.reduce((s,a)=>s+(a.status==='Present'?1:a.status==='Half Day'?.5:0),0),w=aa.reduce((s,a)=>s+wageFor(a),0),i=ee.filter(e=>e.kind==='Income').reduce((s,e)=>s+Number(e.amount),0),x=ee.filter(e=>e.kind==='Expense'||e.kind==='Advance').reduce((s,e)=>s+Number(e.amount),0);
+$('reportContent').innerHTML=`<div style="margin-top:12px"><div class="summaryline"><span>पूरे दिन</span><b>${aa.filter(a=>a.status==='Present').length}</b></div><div class="summaryline"><span>आधे दिन</span><b>${aa.filter(a=>a.status==='Half Day').length}</b></div><div class="summaryline"><span>छुट्टी</span><b>${aa.filter(a=>a.status==='Absent').length}</b></div><div class="summaryline"><span>कुल हाज़िरी की कमाई</span><b>${money(w)}</b></div><div class="summaryline"><span>आमदनी</span><b class="green">${money(i)}</b></div><div class="summaryline"><span>खर्च और पेशगी</span><b class="red">${money(x)}</b></div><div class="summaryline"><span><b>आमदनी − खर्च/पेशगी</b></span><b>${money(i-x)}</b></div></div>`;
+}
+$('saveAttendance').onclick=()=>{let date=$('attDate').value,wage=Number($('dailyWage').value);if(!date){alert('तारीख चुनें।');return}if(!Number.isFinite(wage)||wage<0){alert('मज़दूरी सही भरें।');return}let old=data.attendance.find(a=>a.date===date);if(old&&!confirm('इस तारीख की हाज़िरी पहले से है। क्या बदलना चाहते हैं?'))return;data.attendance=data.attendance.filter(a=>a.date!==date);data.attendance.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),date,status,wage,note:$('attNote').value.trim()});persist();showTab('attendance');alert('हाज़िरी सेव हो गई।')};
+$('saveEntry').onclick=()=>{let date=$('entryDate').value,amount=Number($('amount').value),note=$('note').value.trim();if(!date||!Number.isFinite(amount)||amount<=0||!note){alert('तारीख, सही रकम और हिसाब का विवरण भरें।');return}data.entries.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),date,kind,amount,note});persist();$('amount').value='';$('note').value='';render();alert('हिसाब सेव हो गया।')};
+$('reportMonth').onchange=render;
+function download(name,content,type){let blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+$('backupBtn').onclick=()=>download('mera-hisab-backup-'+today()+'.json',JSON.stringify(data,null,2),'application/json');
+$('restoreBtn').onclick=()=>{let f=$('restoreFile').files[0];if(!f){alert('पहले बैकअप JSON फ़ाइल चुनें।');return}if(!confirm('मौजूदा रिकॉर्ड बैकअप के रिकॉर्ड से बदल जाएंगे। आगे बढ़ें?'))return;let r=new FileReader();r.onload=()=>{try{let p=JSON.parse(r.result);if(!Array.isArray(p.attendance)||!Array.isArray(p.entries))throw Error();data=p;persist();render();alert('बैकअप वापस आ गया।')}catch(e){alert('यह सही मेरा हिसाब बैकअप फ़ाइल नहीं है।')}};r.readAsText(f)};
+$('exportBtn').onclick=()=>{let rows=[['प्रकार','तारीख','स्थिति/विवरण','रकम (रु.)'],...data.attendance.map(a=>['हाज़िरी',a.date,({'Present':'पूरा दिन','Half Day':'आधा दिन','Absent':'छुट्टी'}[a.status])+' '+(a.note||''),wageFor(a)]),...data.entries.map(e=>[({'Income':'आमदनी','Expense':'खर्च','Advance':'पेशगी'}[e.kind]),e.date,e.note,e.amount])];let csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');download('mera-hisab-'+$('reportMonth').value+'.csv',csv,'text/csv;charset=utf-8')};
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+// Monthly tap-to-mark attendance calculator
+let calMarks={};
+$('calMonth').value=today().slice(0,7);
+function calKey(y,m,d){return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`}
+function drawCalendar(){const val=$('calMonth').value||today().slice(0,7);const [y,m]=val.split('-').map(Number);const first=new Date(y,m-1,1).getDay(),total=new Date(y,m,0).getDate();calMarks={};data.attendance.filter(a=>a.date.startsWith(val)).forEach(a=>calMarks[a.date]=a.status);let html=['र','सो','मं','बु','गु','शु','श'].map(x=>`<div style="text-align:center;font-size:11px;color:#66736b;font-weight:700">${x}</div>`).join('');for(let i=0;i<first;i++)html+='<div></div>';for(let d=1;d<=total;d++){let key=calKey(y,m-1,d),st=calMarks[key]||'',cl=st==='Present'?'full':st==='Half Day'?'half':st==='Absent'?'absent':'blank',lab=st==='Present'?'पूरा':st==='Half Day'?'आधा':st==='Absent'?'छुट्टी':'—';html+=`<button class="calday ${cl}" data-date="${key}" type="button">${d}<small>${lab}</small></button>`}$('calendarGrid').innerHTML=html;document.querySelectorAll('.calday[data-date]').forEach(b=>b.onclick=()=>{let k=b.dataset.date,seq=['','Present','Half Day','Absent'],i=seq.indexOf(calMarks[k]||'');calMarks[k]=seq[(i+1)%seq.length];if(!calMarks[k])delete calMarks[k];drawCalendar()});calcCalendar()}
+function calcCalendar(){let full=0,half=0;Object.values(calMarks).forEach(s=>{if(s==='Present')full++;if(s==='Half Day')half++});let wage=Number($('calWage').value)||0;$('calFull').textContent=full;$('calHalf').textContent=half;$('calDays').textContent=full+half/2;$('calTotal').textContent=money((full+half/2)*wage)}
+$('calMonth').onchange=drawCalendar;$('calWage').oninput=calcCalendar;
+$('saveCalendar').onclick=()=>{let month=$('calMonth').value,wage=Number($('calWage').value);if(!month){alert('महीना चुनें।');return}if(!Number.isFinite(wage)||wage<=0){alert('एक दिन की सही मज़दूरी भरें।');return}let keys=Object.keys(calMarks);if(!keys.length){alert('पहले कैलेंडर में तारीखों पर टैप करके हाज़िरी भरें।');return}keys.forEach(date=>{let status=calMarks[date],old=data.attendance.find(a=>a.date===date);if(old){old.status=status;old.wage=wage}else data.attendance.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+date,date,status,wage,note:''})});if(persist()){render();alert('महीने की हाज़िरी सेव हो गई!');showTab('attendance')}};
+drawCalendar();render();
+</script>
+</body></html>
